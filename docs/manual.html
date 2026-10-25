@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ScrapeWay 取扱説明書</title>
+<style>
+:root {
+  --bg: #fbfbf9; --panel: #ffffff; --fg: #1f2328; --sub: #5f6770; --line: #e2e4e7;
+  --accent: #0b6bcb; --accent-soft: #e8f1fb; --note: #fff7df; --note-line: #e9d38f;
+  --warn: #fdecec; --warn-line: #efb4b4; --code: #f2f3f5;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16181b; --panel: #1e2125; --fg: #e4e6e8; --sub: #a0a8b2; --line: #30343a;
+    --accent: #5aa5ee; --accent-soft: #1c2b3b; --note: #2c2716; --note-line: #6b5b24;
+    --warn: #351d1d; --warn-line: #7a3a3a; --code: #262a2f;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.85 "Yu Gothic UI", "Hiragino Sans", "Meiryo", system-ui, sans-serif; }
+a { color: var(--accent); }
+.layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+nav.toc { position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; padding: 28px 16px 28px 24px; border-right: 1px solid var(--line); font-size: 14px; line-height: 1.6; }
+nav.toc .brand { font-weight: 700; font-size: 17px; margin-bottom: 4px; }
+nav.toc .ver { color: var(--sub); font-size: 12px; margin-bottom: 18px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+nav.toc li { margin: 2px 0; }
+nav.toc li a { display: block; padding: 4px 8px; border-radius: 6px; text-decoration: none; color: var(--fg); }
+nav.toc li a:hover { background: var(--accent-soft); color: var(--accent); }
+main { padding: 32px 40px 80px; max-width: 860px; }
+h1 { font-size: 30px; line-height: 1.4; margin: 0 0 6px; }
+.lead { color: var(--sub); margin: 0 0 28px; }
+h2 { font-size: 22px; margin: 56px 0 14px; padding-top: 10px; border-top: 1px solid var(--line); }
+h3 { font-size: 17px; margin: 30px 0 8px; }
+p { margin: 10px 0; }
+ol.steps { counter-reset: step; list-style: none; padding: 0; margin: 14px 0; }
+ol.steps > li { counter-increment: step; position: relative; padding: 2px 0 12px 42px; }
+ol.steps > li::before { content: counter(step); position: absolute; left: 0; top: 2px; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 14px; display: grid; place-items: center; }
+ul { padding-left: 1.3em; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 15px; background: var(--panel); }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: var(--code); font-weight: 600; white-space: nowrap; }
+code, kbd { font-family: "Cascadia Mono", Consolas, monospace; font-size: .9em; background: var(--code); padding: 1px 6px; border-radius: 4px; word-break: break-all; }
+kbd { border: 1px solid var(--line); border-bottom-width: 2px; }
+.btn { display: inline-block; padding: 0 8px; border: 1px solid var(--line); border-radius: 5px; background: var(--panel); font-size: .92em; white-space: nowrap; }
+.note, .warn { padding: 12px 16px; border-radius: 8px; margin: 16px 0; border-left: 4px solid; }
+.note { background: var(--note); border-color: var(--note-line); }
+.warn { background: var(--warn); border-color: var(--warn-line); }
+.note b:first-child, .warn b:first-child { display: block; margin-bottom: 2px; }
+.screen { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; font-size: 14px; line-height: 1.7; font-family: "Cascadia Mono", Consolas, "Yu Gothic UI", monospace; white-space: pre; overflow-x: auto; }
+.mock { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); font-size: 13px; overflow: hidden; margin: 14px 0; }
+.mock-menu { padding: 4px 12px; color: var(--sub); border-bottom: 1px solid var(--line); }
+.mock-head { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; padding: 8px 12px; }
+.mock-login { color: var(--sub); }
+.mock-tabs { display: flex; gap: 4px; padding: 0 12px; border-bottom: 1px solid var(--line); }
+.mock-tabs span { padding: 3px 12px; border: 1px solid var(--line); border-bottom: 0; border-radius: 6px 6px 0 0; color: var(--sub); }
+.mock-tabs span.on { color: var(--fg); background: var(--accent-soft); }
+.mock-body { padding: 10px 12px; display: grid; gap: 8px; }
+.mock-url { display: flex; gap: 6px; align-items: center; }
+.mock-input { flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 5px; padding: 2px 8px; color: var(--sub); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.mock-box { border: 1px dashed var(--line); border-radius: 6px; padding: 14px 10px; color: var(--sub); text-align: center; }
+.mock-split { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mock-status { padding: 4px 12px; border-top: 1px solid var(--line); color: var(--sub); }
+dl.faq dt { font-weight: 700; margin-top: 18px; }
+dl.faq dd { margin: 4px 0 0; padding-left: 1em; border-left: 3px solid var(--line); }
+footer { margin-top: 60px; color: var(--sub); font-size: 13px; }
+@media (max-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  nav.toc { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 20px 16px; }
+  main { padding: 24px 16px 60px; }
+  table { display: block; overflow-x: auto; }
+  th { white-space: normal; }
+}
+@media print {
+  nav.toc { display: none; }
+  .layout { display: block; }
+  h2 { break-before: page; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc">
+  <div class="brand">ScrapeWay</div>
+  <div class="ver">取扱説明書（バージョン 1.1.0）</div>
+  <ol>
+    <li><a href="#about">1. ScrapeWay でできること</a></li>
+    <li><a href="#install">2. 準備と起動</a></li>
+    <li><a href="#screen">3. 画面の見かた</a></li>
+    <li><a href="#login">4. pixiv にログインする</a></li>
+    <li><a href="#pixiv">5. pixiv の小説を取り込む</a></li>
+    <li><a href="#wayback">6. Wayback Machine から取り込む</a></li>
+    <li><a href="#jobs">7. 保存の進み具合と中止</a></li>
+    <li><a href="#library">8. ライブラリで探す・読む</a></li>
+    <li><a href="#reader">9. 読書画面の使いかた</a></li>
+    <li><a href="#settings">10. 設定</a></li>
+    <li><a href="#files">11. 保存されるファイル</a></li>
+    <li><a href="#faq">12. 困ったときは</a></li>
+    <li><a href="#notes">13. ご注意</a></li>
+  </ol>
+</nav>
+
+<main>
+<h1>ScrapeWay 取扱説明書</h1>
+<p class="lead">Web の小説を、公開されたときの形のまま手元に保存して、オフラインで読むためのアプリです。</p>
+
+<h2 id="about">1. ScrapeWay でできること</h2>
+<table>
+  <tr><th>サイト</th><th>できること</th></tr>
+  <tr><td>pixiv 小説</td><td>作者の全作品・シリーズ・1話を、まとめて保存します。新しい話や更新された話を見つけて、その分だけ保存することもできます。R-18 作品も、ログインすれば保存できます。</td></tr>
+  <tr><td>Wayback Machine<br>（インターネットアーカイブ）</td><td>今はもう無い昔の個人サイトの小説を、アーカイブから保存します。目次ページから各話へのリンクをたどって、まとめて保存できます。</td></tr>
+</table>
+<p>保存した小説は、インターネットにつながっていなくても読めます。読むときは、縦書き・文字の大きさ・配色を切り替えられます。</p>
+<p>保存するときは、<b>元のデータを手を加えずにそのまま残し</b>、読むためのページはそれとは別に作ります。サイトが消えても、元の形の記録が残ります。</p>
+
+<h2 id="install">2. 準備と起動</h2>
+<h3>必要なもの</h3>
+<ul>
+  <li>Windows 10 または 11（64 ビット）</li>
+  <li>pixiv にログインする場合：Google Chrome または Microsoft Edge（Windows に最初から入っています）</li>
+</ul>
+<p>ほかのソフトのインストールは要りません。</p>
+
+<h3>はじめて使うとき</h3>
+<ol class="steps">
+  <li><code>ScrapeWay.zip</code> を右クリックして「すべて展開」を選び、好きな場所に展開します（例：<code>ドキュメント</code> の中）。</li>
+  <li>展開した <code>ScrapeWay</code> フォルダの中の <b>ScrapeWay.exe</b> をダブルクリックすると起動します。</li>
+  <li>「Windows によって PC が保護されました」と表示されたら、「詳細情報」→「実行」を押してください（このアプリには電子署名がないため表示されます）。</li>
+</ol>
+<div class="note"><b>ヒント</b>ScrapeWay.exe を右クリックして「送る」→「デスクトップ（ショートカットを作成）」を選ぶと、次からはデスクトップから起動できます。</div>
+<div class="warn"><b>フォルダの中身は動かさないでください</b>ScrapeWay.exe と同じフォルダにある DLL ファイルやフォルダは、アプリが動くのに必要です。exe だけを別の場所に移すと起動しません。</div>
+
+<h2 id="screen">3. 画面の見かた</h2>
+<div class="mock" aria-label="ScrapeWay の画面の模式図">
+  <div class="mock-menu">ファイル　アカウント　ヘルプ</div>
+  <div class="mock-head"><b>ScrapeWay</b><span class="mock-login">● pixiv: 未ログイン <span class="btn">ログイン</span></span></div>
+  <div class="mock-tabs"><span class="on">取り込み</span><span>ライブラリ</span></div>
+  <div class="mock-body">
+    <div class="mock-url"><span class="mock-input">URL を貼り付け</span><span class="btn">貼り付け</span><span class="btn">読み込む</span></div>
+    <div class="mock-box">作品の一覧（チェックを入れて保存）</div>
+    <div class="mock-split"><div class="mock-box">保存の進行状況</div><div class="mock-box">ログ</div></div>
+  </div>
+  <div class="mock-status">（画面の下）状態の表示</div>
+</div>
+<table>
+  <tr><th>場所</th><th>役割</th></tr>
+  <tr><td>右上のログイン表示</td><td>pixiv にログインしているか表します。● 緑：ログイン済み ／ ● 黄：ログイン待ち ／ ● 灰：未ログイン</td></tr>
+  <tr><td>取り込み タブ</td><td>URL を入れて作品の一覧を出し、選んだものを保存します。</td></tr>
+  <tr><td>ライブラリ タブ</td><td>保存した作品を一覧し、探して、読みます。</td></tr>
+  <tr><td>ヘルプ → 使い方</td><td>この取扱説明書を開きます。</td></tr>
+</table>
+
+<h2 id="login">4. pixiv にログインする</h2>
+<p>全年齢の作品は、ログインしなくても保存できます。<b>R-18 作品を保存するときは、ログインが必要です。</b>ログインは最初の1回だけで、次からは自動でログインした状態になります。</p>
+<ol class="steps">
+  <li>右上の <span class="btn">ログイン</span> を押します。</li>
+  <li>ログイン専用の Chrome（Chrome が無い場合は Edge）が開いて、pixiv のログイン画面が表示されます。メールアドレスとパスワード、または「Google でログイン」などでログインします。</li>
+  <li>pixiv のトップページが表示されたら、<b>そのブラウザを右上の × で閉じます。</b></li>
+  <li>アプリが自動でログインを確認します（数秒かかります）。右上の表示が「● pixiv: あなたの名前」に変われば完了です。</li>
+</ol>
+<div class="note"><b>このブラウザはログイン専用です</b>普段お使いの Chrome とは別のものとして開くので、普段の Chrome のログイン情報やブックマークには影響しません。普段の Chrome でログインしていても、このアプリでもう一度ログインする必要があります。</div>
+<p>ログイン情報を消したいときは、メニューの「アカウント」→「ログイン情報を削除」を選びます。</p>
+
+<h2 id="pixiv">5. pixiv の小説を取り込む</h2>
+<ol class="steps">
+  <li>Chrome で、保存したい作品や作者のページを開き、アドレスバーの URL をコピーします（<kbd>Ctrl</kbd>+<kbd>C</kbd>）。</li>
+  <li>ScrapeWay に切り替えると、コピーした URL が自動で入ります（入らないときは <span class="btn">貼り付け</span> を押します）。</li>
+  <li><span class="btn">読み込む</span> を押すと、作品の一覧が出ます。</li>
+  <li>保存したい話にチェックが入っていることを確かめて、<span class="btn">選択した N 話を保存</span> を押します。</li>
+</ol>
+<h3>使える URL</h3>
+<table>
+  <tr><th>保存するもの</th><th>URL の例</th></tr>
+  <tr><td>作者の全小説</td><td><code>https://www.pixiv.net/users/12345678</code></td></tr>
+  <tr><td>シリーズ全話</td><td><code>https://www.pixiv.net/novel/series/1234567</code></td></tr>
+  <tr><td>1話だけ</td><td><code>https://www.pixiv.net/novel/show.php?id=12345678</code></td></tr>
+</table>
+<h3>一覧の見かた</h3>
+<p>シリーズごとにまとまって表示されます。シリーズ名の横のチェックで、そのシリーズ全体をまとめて選べます。</p>
+<table>
+  <tr><th>状態</th><th>意味</th><th>最初のチェック</th></tr>
+  <tr><td>（空欄）</td><td>まだ保存していない</td><td>入っている</td></tr>
+  <tr><td><span style="color:#c48a00">更新あり</span></td><td>保存したあとで作者が書き直した</td><td>入っている</td></tr>
+  <tr><td><span style="color:#2e9d4f">保存済み</span></td><td>保存した時から変わっていない</td><td>入っていない</td></tr>
+</table>
+<p>上のボタンで、選択をまとめて変えられます。</p>
+<ul>
+  <li><span class="btn">未保存と更新ありを選択</span>：まだ保存していないものと、更新されたものだけを選びます。</li>
+  <li><span class="btn">すべて選択</span>：全部を選びます。保存済みのものを選ぶと、上書きして保存し直します。</li>
+  <li><span class="btn">選択解除</span>：全部の選択を外します。</li>
+</ul>
+<div class="note"><b>新しい話が出たか調べるには</b>ライブラリで作者名を右クリックし、「新しい話・更新を確認」を選びます。新しい話と更新された話だけにチェックが入った一覧が出るので、そのまま保存を押すだけです。</div>
+
+<h2 id="wayback">6. Wayback Machine から取り込む</h2>
+<p>Wayback Machine（<code>web.archive.org</code>）は、昔の Web ページを記録しているサービスです。閉鎖したサイトの小説も、ここに残っていれば保存できます。</p>
+<ol class="steps">
+  <li>Chrome で Wayback Machine を開き、保存したい小説の<b>目次のページ</b>を表示します。</li>
+  <li>アドレスバーの URL をコピーします。<code>https://web.archive.org/web/20050101123456/http://…</code> のような形です。</li>
+  <li>ScrapeWay に切り替えて <span class="btn">読み込む</span> を押します。<b>一覧が出るまで数十秒かかることがあります。</b></li>
+  <li>保存したいページにチェックを入れて、<span class="btn">選択した N ページを保存</span> を押します。</li>
+</ol>
+<h3>一覧の見かた</h3>
+<table>
+  <tr><th>グループ</th><th>内容</th><th>最初のチェック</th></tr>
+  <tr><td>開いたページ</td><td>URL を入れたページ（目次など）</td><td>入っている</td></tr>
+  <tr><td>このページからのリンク</td><td>そのページのリンク先（目次なら各話）。リンクの文字が題名として表示されます</td><td>入っている</td></tr>
+  <tr><td>同じフォルダ内のその他の保存ページ</td><td>リンクはされていないが、同じフォルダに残っているページ</td><td>入っていない（必要なら選んでください）</td></tr>
+</table>
+<table>
+  <tr><th>状態</th><th>意味</th></tr>
+  <tr><td><span style="color:#2e9d4f">保存済み</span></td><td>もう保存してある</td></tr>
+  <tr><td><span style="color:#8c8c8c">Wayback になし</span></td><td>リンクはあるが、Wayback Machine に一度も記録されていない（保存できません）</td></tr>
+</table>
+<ul>
+  <li>小説の本文が別のフォルダにあって一覧に出てこないときは、<span class="btn">一つ上のフォルダも含めて一覧にする</span> を押してください。</li>
+  <li>ページと一緒に、同じサイトの画像・背景・BGM なども保存されます（Wayback に記録されているものだけです）。</li>
+  <li>昔のサイトによくある Shift_JIS・EUC-JP などの文字コードは、自動で判別します。文字化けせずに読めます。</li>
+</ul>
+<div class="note"><b>どの時期の版が保存されるか</b>Wayback Machine には、同じページが何度も記録されていることがあります。ScrapeWay は、ページごとに<b>消えていない一番新しい版</b>を保存します。後の記録が「ページが見つかりません」「閉鎖しました」「移転しました」などのお知らせになっている場合は、それを飛ばして、その前の正常な版を保存します（ログに「○○ の版は消えたページのようです」と表示されます）。保存されるのは最新の1つだけで、昔の版は残りません。</div>
+<p>一覧の「最初の記録」の列は、そのページが<b>初めて記録された日</b>です。実際に保存された版の日付は、ログ（「保存: 題名（2019/01/01 の版）」）とライブラリの「更新日」で確かめられます。保存済みのページを選んでもう一度保存すると、その時点の最新の版に更新されます（変わっていなければ取得し直しません）。</p>
+
+<h2 id="jobs">7. 保存の進み具合と中止</h2>
+<p>保存を始めると、取り込みタブの下の「保存の進行状況」に表示されます。</p>
+<ul>
+  <li>サイトに負担をかけないよう、1件ずつ、<b>決まった間隔（初めは 3 秒）をあけて</b>保存します。100 話なら約 5 分かかります。</li>
+  <li>保存中も、ほかの URL を読み込んだり、次の保存を予約したりできます。予約した保存は順番に行われます。</li>
+  <li>やめたいときは、一覧で選んで <span class="btn">選択した作業を中止</span> を押します。それまでに保存した分は残ります。</li>
+  <li>右側の「ログ」に、保存した題名や失敗の理由が表示されます。</li>
+  <li>保存中にアプリを閉じようとすると、確認が出ます。閉じると保存は中止されます（保存済みの分は残ります）。</li>
+</ul>
+
+<h2 id="library">8. ライブラリで探す・読む</h2>
+<p>「ライブラリ」タブに、保存した作品がすべて表示されます。</p>
+<table>
+  <tr><th>表示</th><th>並び</th></tr>
+  <tr><td>pixiv</td><td>作者 → シリーズ（または単発作品）→ 話。新しく更新されたものが上に来ます。</td></tr>
+  <tr><td>Wayback</td><td>サイト → フォルダ → ページ</td></tr>
+</table>
+<ul>
+  <li><b>読む</b>：話やページを<b>ダブルクリック</b>すると、ブラウザで開きます。</li>
+  <li><b>探す</b>：上の検索欄に、題名・作者名・シリーズ名・タグの一部を入れると絞り込めます。</li>
+  <li><b>右クリック</b>：「第1話から読む」「フォルダを開く」「pixiv で開く」「Wayback で開く」「新しい話・更新を確認」などが選べます。</li>
+</ul>
+
+<h2 id="reader">9. 読書画面の使いかた</h2>
+<p>pixiv の小説は、読みやすい専用の画面で開きます。上のボタンで表示を変えられます。</p>
+<table>
+  <tr><th>ボタン</th><th>働き</th></tr>
+  <tr><td><span class="btn">縦書き</span> / <span class="btn">横書き</span></td><td>縦書きと横書きを切り替えます。縦書きのときは、マウスのホイールで左右に送れます。</td></tr>
+  <tr><td><span class="btn">A−</span> <span class="btn">A＋</span></td><td>文字を小さく／大きくします。</td></tr>
+  <tr><td><span class="btn">配色</span></td><td>白 → セピア → 黒 の順に切り替えます。</td></tr>
+</table>
+<p>選んだ設定は次に開いたときも引き継がれます。シリーズの話には、上下に「← 前の話」「次の話 →」のリンクがあります。ルビ・改ページ・章の見出し・挿絵も、pixiv と同じように表示されます。</p>
+<p>Wayback から保存したページは、当時のデザインのまま表示されます。上に黄色い帯で、記録された日付と「保存したページの一覧」へのリンクが出ます。</p>
+
+<h2 id="settings">10. 設定</h2>
+<table>
+  <tr><th>設定</th><th>変えかた</th></tr>
+  <tr><td>保存先のフォルダ</td><td>「ファイル」→「保存先フォルダを変更…」。初めは <code>ドキュメント\ScrapeWay</code> です。変更しても、今までに保存したファイルは移動しません（必要なら、エクスプローラーで新しいフォルダに移してください）。</td></tr>
+  <tr><td>取得の間隔</td><td>取り込みタブの「取得間隔」（1〜60 秒）。最後に使った値を覚えています。<b>短くしすぎないでください</b>（<a href="#notes">13章</a>）。</td></tr>
+</table>
+<h3>USB メモリなどで持ち歩く（ポータブル版）</h3>
+<p>ScrapeWay.exe と同じフォルダに、<code>portable.txt</code> という名前の空のファイルを作ってください（メモ帳で何も書かずに保存すれば作れます）。次からは、設定とログイン情報を ScrapeWay フォルダの中の <code>data</code> に保存するようになり、フォルダごと持ち運べます。保存先のフォルダも ScrapeWay フォルダの近くに変更しておくと便利です。</p>
+
+<h2 id="files">11. 保存されるファイル</h2>
+<p>保存先フォルダ（初めは <code>ドキュメント\ScrapeWay</code>）の中に、次のように保存されます。エクスプローラーで直接開いて、ほかのソフトで使うこともできます。</p>
+<h3>pixiv</h3>
+<div class="screen">pixiv\
+  12345678_作者名\
+    series_1234567_シリーズ名\
+      001_23456789_第一話の題名\
+        content.txt   ← 本文（pixiv に投稿されたままの文章）
+        meta.json     ← 題名・キャプション・タグ・日付などの情報
+        novel.html    ← 読むためのページ（ダブルクリックでブラウザで開けます）
+        cover.jpg     ← 表紙
+        images\       ← 挿絵</div>
+<h3>Wayback Machine</h3>
+<div class="screen">wayback\
+  www.example.jp\
+    index.html    ← 保存したページの目次
+    view\         ← 読むためのページ（文字化けしないように直したもの）
+    original\     ← 記録されていたファイルそのもの（当時の文字コードのまま）
+    site.json     ← 保存の記録</div>
+<div class="note"><b>読むためのページは自動で作り直されます</b><code>novel.html</code> と <code>view\</code> は、元のデータからアプリが作っています。消してしまっても、次にアプリを起動したときに作り直されます。<code>content.txt</code>・<code>meta.json</code>・<code>original\</code>・<code>site.json</code> は元のデータなので、消さないでください。</div>
+
+<h2 id="faq">12. 困ったときは</h2>
+<dl class="faq">
+  <dt>「このブラウザまたはアプリは安全でない可能性があります」と出て、Google でログインできない</dt>
+  <dd>古い版の ScrapeWay で起きていた問題です。最新の版を使ってください。最新の版でも出る場合は、pixiv のログイン画面で、Google ではなくメールアドレス（pixiv ID）とパスワードでログインしてください。</dd>
+
+  <dt>ログインしたのに「pixiv へのログインが確認できませんでした」と出る</dt>
+  <dd>pixiv のトップページが表示されてから、ブラウザを閉じてください。ログイン画面のまま閉じると確認できません。もう一度 <span class="btn">ログイン</span> を押すと、前回のログイン状態が残っていれば、すぐ閉じても確認できます。</dd>
+
+  <dt>「ログイン用のブラウザが既に開いているようです」と出る</dt>
+  <dd>前に開いたログイン専用のブラウザが、どこかに開いたままになっています。そのブラウザを閉じてから、もう一度 <span class="btn">ログイン</span> を押してください。</dd>
+
+  <dt>作者の URL を読み込んだのに「小説が見つかりません」と出る</dt>
+  <dd>その作者の作品が R-18 だけの場合、ログインしていないと 0 件になります。<a href="#login">4章</a>の手順でログインしてください。ログインしているのに出る場合は、ログインの有効期限が切れている可能性があります。<span class="btn">再ログイン</span> を押してください。</dd>
+
+  <dt>Wayback の一覧がなかなか出ない</dt>
+  <dd>Wayback Machine の検索は時間がかかることがあります（1 分前後）。それでも出ない場合や、エラーになる場合は、Wayback Machine が混み合っているので、少し時間をおいて試してください。</dd>
+
+  <dt>「Internet Archive が一時停止中のため、60 秒待ってやり直します」と出る／保存が途中で止まった</dt>
+  <dd>Internet Archive（Wayback Machine）が混雑して、一時的に止まっています。しばらく待っても戻らない場合、ScrapeWay は保存を打ち切ります（保存済みの分は残ります）。時間をおいて同じ URL を読み込み、「未保存と更新ありを選択」→ 保存で続きから再開できます。</dd>
+
+  <dt>保存の進行状況の数字がなかなか増えない</dt>
+  <dd>ログを見てください。「HTTP 502 のため 10 秒待ってやり直します」のような表示が出ていれば、Wayback 側が応答しないファイルを待っている最中です。止まっているわけではありません。何も表示が出ず、「保存の進行状況」が空なら、保存は実行されていません。一覧でチェックを入れて「保存」を押してください（「同じフォルダ内のその他の保存ページ」には、最初はチェックが入っていません）。</dd>
+
+  <dt>Wayback の一覧に、読みたい話が出てこない</dt>
+  <dd><span class="btn">一つ上のフォルダも含めて一覧にする</span> を押してください。それでも出ない場合や「Wayback になし」と表示される場合は、その話は Wayback Machine に記録されていません。</dd>
+
+  <dt>Wayback から保存したページの画像が表示されない</dt>
+  <dd>その画像は Wayback Machine に記録されていなかったため、保存できませんでした。ログに「画像などの取得に失敗」と出ています。</dd>
+
+  <dt>Wayback から保存したページが文字化けする</dt>
+  <dd>アプリを起動し直してください（起動するときに、読むためのページが作り直されます）。それでも直らない場合は、ページの URL を開発者に知らせてください。</dd>
+
+  <dt>保存の途中で「失敗」が出た</dt>
+  <dd>ログに理由が表示されます。「HTTP 429」などは、サイトが混雑しているかアクセスが多すぎる印です。取得間隔を長くして、もう一度読み込んで保存してください（保存済みの分は自動で飛ばされます）。</dd>
+
+  <dt>起動しない／「○○.dll が見つかりません」と出る</dt>
+  <dd>ScrapeWay フォルダの中身がそろっていません。zip ファイルをもう一度展開して、フォルダごと使ってください。</dd>
+</dl>
+
+<h2 id="notes">13. ご注意</h2>
+<ul>
+  <li><b>保存した作品の著作権は、作者にあります。</b>保存は、自分で読むためなど個人的な利用の範囲にとどめてください。保存したファイルを他の人に渡したり、インターネットに公開したりしないでください。</li>
+  <li><b>取得の間隔を短くしすぎないでください。</b>短時間にたくさんのアクセスをすると、pixiv や Wayback Machine から制限を受けたり、アカウントが利用停止になったりすることがあります。初めの 3 秒のままで使うことをおすすめします。</li>
+  <li><b>ログイン情報を他人に渡さないでください。</b>設定のフォルダ（<code>%APPDATA%\ScrapeWay</code>。ポータブル版は <code>data</code> フォルダ）には、pixiv にログインした状態が保存されています。ポータブル版を他の人に渡すときは、<code>data</code> フォルダを消してから渡してください。</li>
+  <li>pixiv や Wayback Machine の仕組みが変わると、保存できなくなることがあります。</li>
+</ul>
+<h3>アンインストール</h3>
+<ol class="steps">
+  <li>ScrapeWay フォルダを削除します。</li>
+  <li>設定とログイン情報も消すときは、エクスプローラーのアドレス欄に <code>%APPDATA%\ScrapeWay</code> と入力して開き、そのフォルダを削除します。</li>
+  <li>保存した作品（<code>ドキュメント\ScrapeWay</code>）は、必要なければ削除してください。</li>
+</ol>
+
+<footer>ScrapeWay 1.1.0 取扱説明書</footer>
+</main>
+</div>
+</body>
+</html>

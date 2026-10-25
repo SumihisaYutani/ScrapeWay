@@ -1,0 +1,20 @@
+# ビルドの生成物
+/build/
+/dist/
+CMakeLists.txt.user*
+/.qtcreator/
+
+# 実行時のデータ (ログイン情報・保存した作品)。公開リポジトリに入れないこと
+/data/
+/profiles/
+/output/
+portable.txt
+
+# 旧 Python 版 (Qt 版に置き換え済み)
+/scrapeway/
+/pixiv_save.py
+/mixi_save.py
+/ScrapeWay.bat
+/requirements.txt
+/.venv/
+__pycache__/
