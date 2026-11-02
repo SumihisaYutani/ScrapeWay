@@ -310,8 +310,8 @@ QWidget* MainWindow::buildLibraryTab()
     connect(searchEdit_, &QLineEdit::textChanged, this, &MainWindow::renderLibrary);
     connect(reload, &QPushButton::clicked, this, &MainWindow::reloadLibrary);
     connect(openRoot, &QPushButton::clicked, this, [this] {
-        QDir().mkpath(pixiv::pixivRoot());
-        openFolder(pixiv::pixivRoot());
+        QDir().mkpath(paths::libraryRoot());
+        openFolder(paths::libraryRoot());
     });
 
     libTree_ = new QTreeWidget;
@@ -342,8 +342,8 @@ void MainWindow::buildMenu()
     auto* file = menuBar()->addMenu("ファイル(&F)");
     file->addAction("保存先フォルダを変更…", this, &MainWindow::changeLibraryRoot);
     file->addAction("保存先フォルダを開く", this, [this] {
-        QDir().mkpath(pixiv::pixivRoot());
-        openFolder(pixiv::pixivRoot());
+        QDir().mkpath(paths::libraryRoot());
+        openFolder(paths::libraryRoot());
     });
     file->addSeparator();
     file->addAction("終了", this, &QWidget::close);
